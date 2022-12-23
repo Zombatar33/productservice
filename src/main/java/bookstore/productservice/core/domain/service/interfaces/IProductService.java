@@ -1,10 +1,12 @@
 package bookstore.productservice.core.domain.service.interfaces;
 
 import bookstore.productservice.core.domain.model.Product;
+import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
-//Schnittstelle zur Datenbank, CRUD
+@Service
 public interface IProductService {
 
     public Product createProduct(Product product);
@@ -13,10 +15,12 @@ public interface IProductService {
 
     public Product getProduct(String isbn13);
 
-    public Product[] getProducts(String searchQuery);
+    public List<Product> getProducts();
 
-    public Product updateProduct(Product product);
+    public List<Product> getProducts(String searchQuery);
 
-    public boolean removeProduct(Product product);
+    public void updateProduct(Product product);
+
+    public void removeProduct(UUID id);
 
 }
