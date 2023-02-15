@@ -15,6 +15,4 @@ public interface IProductRepository extends CrudRepository<Product, UUID> {
 
     List<Product> findAll();
 
-    //TODO: find a fix for findById
-
 }

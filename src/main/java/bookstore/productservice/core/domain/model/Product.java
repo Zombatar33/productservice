@@ -52,6 +52,9 @@ public class Product {
     @Column(nullable = false)
     @Getter @Setter private float price;
 
+    @Column(nullable = false)
+    @Getter @Setter private int stock;
+
 
 }
 

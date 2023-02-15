@@ -4,8 +4,8 @@ import java.util.UUID;
 
 public class ProductNotFoundException extends Exception{
 
-    public ProductNotFoundException (UUID isbn) {
-        super("There is no product with the ISBN "+ isbn);
+    public ProductNotFoundException () {
+        super("There is no product with the given id");
     }
 
 }

@@ -13,7 +13,7 @@ public class EmptySearchResultAdvice {
 
     @ResponseBody
     @ExceptionHandler(value = EmptySearchResultException.class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     String productNotFoundHandler(EmptySearchResultException exception){
         return exception.getMessage();
     }

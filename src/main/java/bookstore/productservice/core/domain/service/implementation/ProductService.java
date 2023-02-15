@@ -3,10 +3,10 @@ package bookstore.productservice.core.domain.service.implementation;
 import bookstore.productservice.core.domain.model.Product;
 import bookstore.productservice.core.domain.service.interfaces.IProductRepository;
 import bookstore.productservice.core.domain.service.interfaces.IProductService;
+import bookstore.productservice.port.product.exception.ProductNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,14 +39,13 @@ public class ProductService implements IProductService {
 
     @Override
     public List<Product> getProducts(String searchQuery) {
-        return productRepository.findByTitle(searchQuery); //TODO: only searches via title right now
+        return productRepository.findByTitle(searchQuery); //only searches via title right now
     }
 
 
     @Override
     public void updateProduct(Product product) {
-        boolean exists = productRepository.existsById(product.getId());
-        if (exists) {
+        if (productRepository.existsById(product.getId())) {
             productRepository.deleteById(product.getId());
             productRepository.save(product);
         }
@@ -56,4 +55,25 @@ public class ProductService implements IProductService {
     public void removeProduct(UUID id) {
         productRepository.deleteById(id);
     }
+
+    @Override
+    public void addStock(UUID id, int quantity) throws ProductNotFoundException {
+        if (productRepository.existsById(id)) {
+            Product tempProduct = productRepository.findById(id).get();
+            tempProduct.setStock(quantity);
+            productRepository.save(tempProduct);
+        }
+        throw new ProductNotFoundException();
+    }
+
+    @Override
+    public int getStock(UUID id) throws ProductNotFoundException {
+        if (productRepository.existsById(id)) {
+            Product tempProduct = productRepository.findById(id).get();
+            return tempProduct.getStock();
+        }
+        throw new ProductNotFoundException();
+    }
+
+
 }

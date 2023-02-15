@@ -13,7 +13,7 @@ public class NoProductsAdvice {
 
     @ResponseBody
     @ExceptionHandler(value = NoProductsException.class)
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     String productNotFoundHandler(NoProductsException exception){
         return exception.getMessage();
     }

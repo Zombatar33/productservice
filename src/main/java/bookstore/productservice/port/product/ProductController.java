@@ -36,7 +36,7 @@ public class ProductController {
         Product product = productService.getProduct(id);
 
         if (product == null) {
-            throw new ProductNotFoundException(id);
+            throw new ProductNotFoundException();
         }
 
         return product;
@@ -53,7 +53,6 @@ public class ProductController {
         return searchResult;
     }
 
-    //TODO: Find a way to test in PM
     @PostMapping("/products")
     public @ResponseBody Product createProduct (@RequestBody Product product) {
         return productService.createProduct(product);
@@ -64,10 +63,24 @@ public class ProductController {
         productService.removeProduct(id);
     }
 
-    //TODO: Find a way to test in PM
     @PutMapping(path="/products")
     public void update (@RequestBody Product product) {
         productService.updateProduct(product);
     }
+
+    @PostMapping("/stock/{id}/{quantity}")
+    public void addStock(@PathVariable(name = "id") UUID id, @PathVariable(name = "quantity") int quantity) throws ProductNotFoundException {
+        productService.addStock(id, quantity);
+    }
+
+    @GetMapping("/stock/{id}")
+    public int getStock(@PathVariable(name = "id") UUID id) throws ProductNotFoundException {
+        return productService.getStock(id);
+    }
+
+
+
+
+
 
 }
