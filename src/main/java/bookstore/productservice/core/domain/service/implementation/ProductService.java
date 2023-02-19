@@ -24,7 +24,7 @@ public class ProductService implements IProductService {
 
     @Override
     public Product getProduct(UUID uuid) {
-        return productRepository.findById(uuid).orElseGet(null);
+        return productRepository.findById(uuid).orElse(null);
     }
 
     @Override
@@ -74,6 +74,4 @@ public class ProductService implements IProductService {
         }
         throw new ProductNotFoundException();
     }
-
-
 }

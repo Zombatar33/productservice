@@ -2,12 +2,12 @@ package bookstore.productservice.port.product;
 
 import bookstore.productservice.core.domain.model.Product;
 import bookstore.productservice.core.domain.service.implementation.ProductService;
-import bookstore.productservice.core.domain.service.interfaces.IProductService;
 import bookstore.productservice.port.product.exception.EmptySearchResultException;
 import bookstore.productservice.port.product.exception.NoProductsException;
 import bookstore.productservice.port.product.exception.ProductNotFoundException;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +16,9 @@ import java.util.UUID;
 @CrossOrigin(origins = "http://localhost:8080")
 @RestController
 public class ProductController {
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     @Autowired
     private ProductService productService;
@@ -78,9 +81,20 @@ public class ProductController {
         return productService.getStock(id);
     }
 
+    @RabbitListener(queues =  "#{queue.name}", concurrency = "5")
+    public CustomReply checkStock(CustomMessage msg) {
+        UUID id = msg.getProductId();
+        int quantity = msg.getQuantity();
+        Product product = productService.getProduct(id);
 
-
-
-
+        if (product == null) {
+            return null;
+        }
+        return CustomReply.builder()
+                .productId(id)
+                .quantity(quantity)
+                .inStock(quantity < product.getStock())
+                .build();
+    }
 
 }
