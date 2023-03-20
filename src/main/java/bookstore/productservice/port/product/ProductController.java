@@ -1,20 +1,28 @@
 package bookstore.productservice.port.product;
 
+import bookstore.authentication.JwtUtil;
 import bookstore.productservice.core.domain.model.Product;
 import bookstore.productservice.core.domain.service.implementation.ProductService;
 import bookstore.productservice.port.product.exception.EmptySearchResultException;
 import bookstore.productservice.port.product.exception.NoProductsException;
 import bookstore.productservice.port.product.exception.ProductNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
 
-@CrossOrigin(origins = "http://localhost:8080")
 @RestController
+@RequestMapping("/")
+@RequiredArgsConstructor
 public class ProductController {
 
     @Autowired
@@ -23,15 +31,18 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
+    @Autowired
+    private Environment environment;
+
     @GetMapping("/products")
-    public List<Product> getProducts() throws NoProductsException {
+    public ResponseEntity<List<Product>> getProducts(HttpServletRequest request) throws Exception {
         List<Product> products = productService.getProducts();
 
         if (products == null || products.size() == 0) {
             throw new NoProductsException();
         }
 
-        return products;
+        return ResponseEntity.ok(products);
     }
 
     @GetMapping("/products/{id}")
@@ -57,7 +68,11 @@ public class ProductController {
     }
 
     @PostMapping("/products")
-    public @ResponseBody Product createProduct (@RequestBody Product product) {
+    public @ResponseBody Product createProduct (@RequestBody Product product, HttpServletRequest request) throws NoProductsException {
+        if (!JwtUtil.allowRequest(request, environment.getProperty("jwt.secret"))) {
+            throw new NoProductsException();
+        }
+
         return productService.createProduct(product);
     }
 
@@ -81,6 +96,7 @@ public class ProductController {
         return productService.getStock(id);
     }
 
+    /*
     @RabbitListener(queues =  "#{queue.name}", concurrency = "5")
     public CustomReply checkStock(CustomMessage msg) {
         UUID id = msg.getProductId();
@@ -96,5 +112,5 @@ public class ProductController {
                 .inStock(quantity < product.getStock())
                 .build();
     }
-
+    */
 }
