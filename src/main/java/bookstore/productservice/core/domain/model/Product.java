@@ -19,7 +19,7 @@ public class Product {
     @GeneratedValue(strategy= GenerationType.UUID)
     @Getter private UUID id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     @Getter private String isbn13;
 
     @Column(nullable = false)

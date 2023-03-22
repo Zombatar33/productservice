@@ -1,6 +1,7 @@
 package bookstore.productservice.core.domain.service.interfaces;
 
 import bookstore.productservice.core.domain.model.Product;
+import bookstore.productservice.port.product.exception.ProductAlreadyExistsException;
 import bookstore.productservice.port.product.exception.ProductNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -10,11 +11,11 @@ import java.util.UUID;
 @Service
 public interface IProductService {
 
-    public Product createProduct(Product product);
+    public Product createProduct(Product product) throws ProductAlreadyExistsException;
 
     public Product getProduct(UUID id);
 
-    public List<Product> getProductsByISBN(String isbn13);
+    public Product getProductByISBN(String isbn13);
 
     public List<Product> getProducts();
 

@@ -4,6 +4,7 @@ import bookstore.productservice.core.domain.model.Product;
 import bookstore.productservice.core.domain.service.implementation.ProductService;
 import bookstore.productservice.port.product.exception.EmptySearchResultException;
 import bookstore.productservice.port.product.exception.NoProductsException;
+import bookstore.productservice.port.product.exception.ProductAlreadyExistsException;
 import bookstore.productservice.port.product.exception.ProductNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -38,14 +39,14 @@ public class ProductController {
     }
 
     @GetMapping("products/isbn/{isbn}")
-    public List<Product> getProduct(@PathVariable String isbn) throws ProductNotFoundException {
-        List<Product> products = productService.getProductsByISBN(isbn);
+    public Product getProduct(@PathVariable String isbn) throws ProductNotFoundException {
+        Product product = productService.getProductByISBN(isbn);
 
-        if (products == null) {
+        if (product == null) {
             throw new ProductNotFoundException();
         }
 
-        return products;
+        return product;
     }
 
     @GetMapping("products/id/{id}")
@@ -76,7 +77,7 @@ public class ProductController {
     }
 
     @PostMapping("products")
-    public @ResponseBody Product createProduct (@RequestBody Product product, HttpServletRequest request) throws NoProductsException {
+    public @ResponseBody Product createProduct (@RequestBody Product product, HttpServletRequest request) throws ProductAlreadyExistsException {
         return productService.createProduct(product);
     }
 

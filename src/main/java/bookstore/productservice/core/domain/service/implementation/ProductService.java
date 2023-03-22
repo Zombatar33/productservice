@@ -3,6 +3,7 @@ package bookstore.productservice.core.domain.service.implementation;
 import bookstore.productservice.core.domain.model.Product;
 import bookstore.productservice.core.domain.service.interfaces.IProductRepository;
 import bookstore.productservice.core.domain.service.interfaces.IProductService;
+import bookstore.productservice.port.product.exception.ProductAlreadyExistsException;
 import bookstore.productservice.port.product.exception.ProductNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,8 +19,11 @@ public class ProductService implements IProductService {
 
 
     @Override
-    public Product createProduct(Product product) {
-         return productRepository.save(product);
+    public Product createProduct(Product product) throws ProductAlreadyExistsException {
+        if (productRepository.findByIsbn13(product.getIsbn13()) == null) {
+            return productRepository.save(product);
+        }
+        throw new ProductAlreadyExistsException();
     }
 
     @Override
@@ -28,7 +32,7 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public List<Product> getProductsByISBN(String isbn13) {
+    public Product getProductByISBN(String isbn13) {
         return productRepository.findByIsbn13(isbn13);
     }
 
