@@ -1,22 +1,32 @@
 package bookstore.productservice.core.domain.service.interfaces;
 
 import bookstore.productservice.core.domain.model.Product;
+import bookstore.productservice.port.product.exception.ProductAlreadyExistsException;
+import bookstore.productservice.port.product.exception.ProductNotFoundException;
+import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
-//Schnittstelle zur Datenbank, CRUD
+@Service
 public interface IProductService {
 
-    public Product createProduct(Product product);
+    public Product createProduct(Product product) throws ProductAlreadyExistsException;
 
-    public Product getProduct(UUID uuid);
+    public Product getProduct(UUID id);
 
-    public Product getProduct(String isbn13);
+    public Product getProductByISBN(String isbn13);
 
-    public Product[] getProducts(String searchQuery);
+    public List<Product> getProducts();
 
-    public Product updateProduct(Product product);
+    public List<Product> getProductsBySearch(String searchQuery);
 
-    public boolean removeProduct(Product product);
+    public void updateProduct(Product product);
+
+    public void removeProduct(UUID id);
+
+    public void addStock(UUID id, int quantity) throws ProductNotFoundException;
+
+    public int getStock(UUID id) throws ProductNotFoundException;
 
 }
