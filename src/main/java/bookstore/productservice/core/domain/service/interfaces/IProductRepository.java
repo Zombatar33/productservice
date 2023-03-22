@@ -11,7 +11,7 @@ public interface IProductRepository extends CrudRepository<Product, UUID> {
 
     List<Product> findByTitle(String title);
 
-    Product findByIsbn13(String isbn13);
+    List<Product> findByIsbn13(String isbn13);
 
     List<Product> findAll();
 

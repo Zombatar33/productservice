@@ -1,6 +1,5 @@
 package bookstore.productservice.port.product;
 
-import bookstore.authentication.JwtUtil;
 import bookstore.productservice.core.domain.model.Product;
 import bookstore.productservice.core.domain.service.implementation.ProductService;
 import bookstore.productservice.port.product.exception.EmptySearchResultException;
@@ -8,12 +7,8 @@ import bookstore.productservice.port.product.exception.NoProductsException;
 import bookstore.productservice.port.product.exception.ProductNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/")
+@RequestMapping("/api/v1/")
 @RequiredArgsConstructor
 public class ProductController {
 
@@ -31,10 +26,7 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    @Autowired
-    private Environment environment;
-
-    @GetMapping("/products")
+    @GetMapping("products")
     public ResponseEntity<List<Product>> getProducts(HttpServletRequest request) throws Exception {
         List<Product> products = productService.getProducts();
 
@@ -45,7 +37,18 @@ public class ProductController {
         return ResponseEntity.ok(products);
     }
 
-    @GetMapping("/products/{id}")
+    @GetMapping("products/isbn/{isbn}")
+    public List<Product> getProduct(@PathVariable String isbn) throws ProductNotFoundException {
+        List<Product> products = productService.getProductsByISBN(isbn);
+
+        if (products == null) {
+            throw new ProductNotFoundException();
+        }
+
+        return products;
+    }
+
+    @GetMapping("products/id/{id}")
     public Product getProduct(@PathVariable UUID id) throws ProductNotFoundException {
         Product product = productService.getProduct(id);
 
@@ -56,9 +59,9 @@ public class ProductController {
         return product;
     }
 
-    @GetMapping("/products/search/{query}")
+    @GetMapping("products/search/{query}")
     public List<Product> productSearch(@PathVariable String query) throws EmptySearchResultException {
-        List<Product> searchResult = productService.getProducts(query);
+        List<Product> searchResult = productService.getProductsBySearch(query);
 
         if (searchResult.size() == 0) {
             throw new EmptySearchResultException();
@@ -67,33 +70,29 @@ public class ProductController {
         return searchResult;
     }
 
-    @PostMapping("/products")
-    public @ResponseBody Product createProduct (@RequestBody Product product, HttpServletRequest request) throws NoProductsException {
-        if (!JwtUtil.allowRequest(request, environment.getProperty("jwt.secret"))) {
-            throw new NoProductsException();
-        }
+    @GetMapping("products/product/stock/id/{id}")
+    public int getStock(@PathVariable(name = "id") UUID id) throws ProductNotFoundException {
+        return productService.getStock(id);
+    }
 
+    @PostMapping("products")
+    public @ResponseBody Product createProduct (@RequestBody Product product, HttpServletRequest request) throws NoProductsException {
         return productService.createProduct(product);
     }
 
-    @DeleteMapping("/products/{id}")
-    public void delete (@PathVariable UUID id) {
-        productService.removeProduct(id);
-    }
-
-    @PutMapping(path="/products")
-    public void update (@RequestBody Product product) {
-        productService.updateProduct(product);
-    }
-
-    @PostMapping("/stock/{id}/{quantity}")
+    @PostMapping("stock/id/{id}/quantity/{quantity}")
     public void addStock(@PathVariable(name = "id") UUID id, @PathVariable(name = "quantity") int quantity) throws ProductNotFoundException {
         productService.addStock(id, quantity);
     }
 
-    @GetMapping("/stock/{id}")
-    public int getStock(@PathVariable(name = "id") UUID id) throws ProductNotFoundException {
-        return productService.getStock(id);
+    @DeleteMapping("products/id/{id}")
+    public void delete (@PathVariable UUID id) {
+        productService.removeProduct(id);
+    }
+
+    @PutMapping(path="products")
+    public void update (@RequestBody Product product) {
+        productService.updateProduct(product);
     }
 
     /*

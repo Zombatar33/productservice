@@ -28,7 +28,7 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public Product getProduct(String isbn13) {
+    public List<Product> getProductsByISBN(String isbn13) {
         return productRepository.findByIsbn13(isbn13);
     }
 
@@ -38,7 +38,7 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public List<Product> getProducts(String searchQuery) {
+    public List<Product> getProductsBySearch(String searchQuery) {
         return productRepository.findByTitle(searchQuery); //only searches via title right now
     }
 
@@ -62,6 +62,7 @@ public class ProductService implements IProductService {
             Product tempProduct = productRepository.findById(id).get();
             tempProduct.setStock(quantity);
             productRepository.save(tempProduct);
+            return;
         }
         throw new ProductNotFoundException();
     }

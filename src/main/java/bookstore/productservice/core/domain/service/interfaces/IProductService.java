@@ -14,11 +14,11 @@ public interface IProductService {
 
     public Product getProduct(UUID id);
 
-    public Product getProduct(String isbn13);
+    public List<Product> getProductsByISBN(String isbn13);
 
     public List<Product> getProducts();
 
-    public List<Product> getProducts(String searchQuery);
+    public List<Product> getProductsBySearch(String searchQuery);
 
     public void updateProduct(Product product);
 

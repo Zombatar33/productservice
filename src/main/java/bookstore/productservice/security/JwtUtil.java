@@ -1,17 +1,15 @@
-package bookstore.authentication;
+package bookstore.productservice.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class JwtUtil {
 
-    public static boolean allowRequest(HttpServletRequest request, String signingKey) {
+    public static boolean allowRequest(HttpServletRequest request, String signingKey, String neededRole) {
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
         final String role;
@@ -40,6 +38,8 @@ public class JwtUtil {
         System.out.println(role);
 
         if (role.equals("ADMIN")) {
+            return true;
+        }else if (role.equals(neededRole)) {
             return true;
         }else {
             return false;
