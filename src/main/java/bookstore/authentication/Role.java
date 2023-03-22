@@ -1,4 +1,4 @@
-package bookstore.productservice.security;
+package bookstore.authentication;
 
 public enum Role {
     USER("USER"), ADMIN("ADMIN");

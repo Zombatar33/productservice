@@ -1,7 +1,7 @@
 package bookstore.productservice;
 
-import bookstore.productservice.security.JwtRoleInterceptor;
-import bookstore.productservice.security.Role;
+import bookstore.authentication.JwtRoleInterceptor;
+import bookstore.authentication.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

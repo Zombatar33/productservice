@@ -1,9 +1,11 @@
-package bookstore.productservice.security;
+package bookstore.authentication;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -34,8 +36,6 @@ public class JwtUtil {
         }catch (Exception e) {
            return false;
         }
-
-        System.out.println(role);
 
         if (role.equals("ADMIN")) {
             return true;

@@ -1,4 +1,4 @@
-package bookstore.productservice.security;
+package bookstore.authentication;
 
 import bookstore.productservice.port.product.exception.NotAuthorizedException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,7 +18,6 @@ public class JwtRoleInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         // Always allow GET
-        System.out.println(request.getMethod());
         if (request.getMethod().equals("GET")) {
             return HandlerInterceptor.super.preHandle(request, response, handler);
         }
