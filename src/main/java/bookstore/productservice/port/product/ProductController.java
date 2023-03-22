@@ -81,7 +81,7 @@ public class ProductController {
         return productService.createProduct(product);
     }
 
-    @PostMapping("stock/id/{id}/quantity/{quantity}")
+    @PostMapping("products/stock/id/{id}/quantity/{quantity}")
     public void addStock(@PathVariable(name = "id") UUID id, @PathVariable(name = "quantity") int quantity) throws ProductNotFoundException {
         productService.addStock(id, quantity);
     }
