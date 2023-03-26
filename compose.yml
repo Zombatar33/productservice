@@ -3,8 +3,8 @@ services:
   product_service:
     container_name: product_service
     build:
-      context: F:\KBE\productservice
-      dockerfile: F:\KBE\productservice\src\main\resources\Dockerfile
+      context: /Users/younes/Desktop/product-service
+      dockerfile: /Users/younes/Desktop/product-service/src/main/resources/Dockerfile
     depends_on:
       products_db:
         condition: service_healthy
@@ -15,7 +15,7 @@ services:
       - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.PostgreSQLDialect
       - SPRING_JPA_HIBERNATE_DDL-AUTO=update
     ports:
-      - 8080:8080
+      - 28081:8080
 
   products_db:
     image: 'postgres:latest'
@@ -35,6 +35,24 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+  cart_service:
+    container_name: cart_service
+    build:
+      context: /Users/younes/Desktop/cart-service
+      dockerfile: /Users/younes/Desktop/cart-service/src/main/resources/Dockerfile
+    depends_on:
+      carts_db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://products_db:5432/db
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.PostgreSQLDialect
+      - SPRING_JPA_HIBERNATE_DDL-AUTO=update
+    ports:
+      - 28080:8080
 
   rabbitmq:
     image: rabbitmq:management
@@ -46,3 +64,58 @@ services:
       interval: 30s
       timeout: 30s
       retries: 3
+
+  carts_db:
+    image: 'postgres:latest'
+    container_name: carts_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: db
+      PGDATA: /data/postgres
+    volumes:
+      - ./data:/data/postgres
+    ports:
+      - 5455:5432
+    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  user_service:
+    container_name: user_service
+    build:
+      context: /Users/younes/Desktop/userservice
+      dockerfile: /Users/younes/Desktop/userservice/src/main/resources/Dockerfile
+    depends_on:
+      users_db:
+        condition: service_healthy
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://users_db:5432/db
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.PostgreSQLDialect
+      - SPRING_JPA_HIBERNATE_DDL-AUTO=update
+    ports:
+      - 28082:8080
+
+  users_db:
+    image: 'postgres:latest'
+    container_name: users_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: db
+      PGDATA: /data/postgres
+    volumes:
+      - ./data:/data/postgres
+    ports:
+      - 5433:5432
+    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
