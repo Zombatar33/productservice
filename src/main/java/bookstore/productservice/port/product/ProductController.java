@@ -2,6 +2,7 @@ package bookstore.productservice.port.product;
 
 import bookstore.productservice.core.domain.model.Product;
 import bookstore.productservice.core.domain.service.implementation.ProductService;
+import bookstore.productservice.port.product.dto.SearchRequest;
 import bookstore.productservice.port.product.exception.EmptySearchResultException;
 import bookstore.productservice.port.product.exception.NoProductsException;
 import bookstore.productservice.port.product.exception.ProductAlreadyExistsException;
@@ -50,17 +51,6 @@ public class ProductController {
         return product;
     }
 
-    @GetMapping("products/search/{query}")
-    public List<Product> productSearch(@PathVariable String query) throws EmptySearchResultException {
-        List<Product> searchResult = productService.getProductsBySearch(query);
-
-        if (searchResult.size() == 0) {
-            throw new EmptySearchResultException();
-        }
-
-        return searchResult;
-    }
-
     @PostMapping("products")
     public @ResponseBody Product createProduct (@RequestBody Product product) throws ProductAlreadyExistsException {
         return productService.createProduct(product);
@@ -84,6 +74,11 @@ public class ProductController {
     @GetMapping("stock/{id}")
     public int getStock(@PathVariable(name = "id") UUID id) throws ProductNotFoundException {
         return productService.getStock(id);
+    }
+
+    @GetMapping("products/search/{query}")
+    public List<Product> searchProduct(@PathVariable(name = "query") String query) throws EmptySearchResultException {
+        return productService.searchProduct(query);
     }
 
     /*

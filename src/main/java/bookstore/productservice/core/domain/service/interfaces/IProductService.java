@@ -1,6 +1,7 @@
 package bookstore.productservice.core.domain.service.interfaces;
 
 import bookstore.productservice.core.domain.model.Product;
+import bookstore.productservice.port.product.exception.EmptySearchResultException;
 import bookstore.productservice.port.product.exception.ProductAlreadyExistsException;
 import bookstore.productservice.port.product.exception.ProductNotFoundException;
 import org.springframework.stereotype.Service;
@@ -15,11 +16,7 @@ public interface IProductService {
 
     public Product getProduct(UUID id);
 
-    public Product getProductByISBN(String isbn13);
-
     public List<Product> getProducts();
-
-    public List<Product> getProductsBySearch(String searchQuery);
 
     public void updateProduct(Product product);
 
@@ -28,5 +25,9 @@ public interface IProductService {
     public void addStock(UUID id, int quantity) throws ProductNotFoundException;
 
     public int getStock(UUID id) throws ProductNotFoundException;
+
+    public List<Product> searchProduct(String query) throws EmptySearchResultException;
+
+
 
 }

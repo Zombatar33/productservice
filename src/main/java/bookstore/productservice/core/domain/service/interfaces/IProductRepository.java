@@ -15,4 +15,8 @@ public interface IProductRepository extends CrudRepository<Product, UUID> {
 
     List<Product> findAll();
 
+    List<Product> findByTitleContainingIgnoreCase(String title);
+
+    List<Product> findByIsbn13ContainingIgnoreCase(String isbn13);
+
 }
