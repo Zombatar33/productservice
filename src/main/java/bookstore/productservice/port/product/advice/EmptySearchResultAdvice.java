@@ -13,7 +13,7 @@ public class EmptySearchResultAdvice {
 
     @ResponseBody
     @ExceptionHandler(value = EmptySearchResultException.class)
-    @ResponseStatus(HttpStatus.OK) // 200 makes more sense because the request is (hopefully) valid, and "nothing" is still a valid response
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     String productNotFoundHandler(EmptySearchResultException exception){
         return exception.getMessage();
     }
