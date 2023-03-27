@@ -3,8 +3,10 @@ package bookstore.productservice.core.domain.service.implementation;
 import bookstore.productservice.core.domain.model.Product;
 import bookstore.productservice.core.domain.service.interfaces.IProductRepository;
 import bookstore.productservice.core.domain.service.interfaces.IProductService;
+import bookstore.productservice.port.product.exception.EmptySearchResultException;
 import bookstore.productservice.port.product.exception.ProductAlreadyExistsException;
 import bookstore.productservice.port.product.exception.ProductNotFoundException;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,7 @@ import java.util.UUID;
 public class ProductService implements IProductService {
 
     @Autowired
+    @Setter
     private IProductRepository productRepository;
 
 
@@ -32,20 +35,9 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public Product getProductByISBN(String isbn13) {
-        return productRepository.findByIsbn13(isbn13);
-    }
-
-    @Override
     public List<Product> getProducts() {
         return productRepository.findAll();
     }
-
-    @Override
-    public List<Product> getProductsBySearch(String searchQuery) {
-        return productRepository.findByTitle(searchQuery); //only searches via title right now
-    }
-
 
     @Override
     public void updateProduct(Product product) {
@@ -64,7 +56,8 @@ public class ProductService implements IProductService {
     public void addStock(UUID id, int quantity) throws ProductNotFoundException {
         if (productRepository.existsById(id)) {
             Product tempProduct = productRepository.findById(id).get();
-            tempProduct.setStock(quantity);
+            int tempStock = tempProduct.getStock();
+            tempProduct.setStock(tempStock+quantity);
             productRepository.save(tempProduct);
             return;
         }
@@ -79,4 +72,15 @@ public class ProductService implements IProductService {
         }
         throw new ProductNotFoundException();
     }
+
+    @Override
+    public List<Product> searchProduct(String query) throws EmptySearchResultException {
+        if (!productRepository.findByTitleContainingIgnoreCase(query).isEmpty()) {
+            return productRepository.findByTitleContainingIgnoreCase(query);
+        } else if (!productRepository.findByIsbn13ContainingIgnoreCase(query).isEmpty()) {
+            return productRepository.findByIsbn13ContainingIgnoreCase(query);
+        }
+        throw new EmptySearchResultException();
+    }
+
 }
