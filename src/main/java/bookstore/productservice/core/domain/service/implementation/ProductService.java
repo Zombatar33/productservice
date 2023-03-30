@@ -6,11 +6,20 @@ import bookstore.productservice.core.domain.service.interfaces.IProductService;
 import bookstore.productservice.port.product.exception.EmptySearchResultException;
 import bookstore.productservice.port.product.exception.ProductAlreadyExistsException;
 import bookstore.productservice.port.product.exception.ProductNotFoundException;
+import com.stripe.Stripe;
+import com.stripe.exception.StripeException;
+import com.stripe.model.Price;
+import com.stripe.param.PriceCreateParams;
+import com.stripe.param.ProductCreateParams;
+import jakarta.annotation.PostConstruct;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -20,11 +29,28 @@ public class ProductService implements IProductService {
     @Setter
     private IProductRepository productRepository;
 
+    @Value("${stripe.apiKey}")
+    private String stripeApiKey;
+
+    @PostConstruct
+    public void init() {
+        Stripe.apiKey = stripeApiKey;
+    }
+
 
     @Override
     public Product createProduct(Product product) throws ProductAlreadyExistsException {
         if (productRepository.findByIsbn13(product.getIsbn13()) == null) {
-            return productRepository.save(product);
+            Product savedProduct = productRepository.save(product);
+            long priceInCents = (long) product.getPrice() * 100;
+            addProductToStripe(
+                    savedProduct.getId(),
+                    savedProduct.getTitle(),
+                    savedProduct.getDescription(),
+                    priceInCents,
+                    "eur"
+            );
+            return savedProduct;
         }
         throw new ProductAlreadyExistsException();
     }
@@ -83,4 +109,34 @@ public class ProductService implements IProductService {
         throw new EmptySearchResultException();
     }
 
+    public void addProductToStripe(UUID id, String productName, String description, long priceInCents, String currency) {
+
+        String idAsString = id.toString();
+
+        com.stripe.model.Product product = null;
+        try {
+            ProductCreateParams params = ProductCreateParams.builder()
+                    .setId(idAsString)
+                    .setName(productName)
+                    .setDescription(description)
+                    .setActive(true)
+                    .build();
+
+            product = com.stripe.model.Product.create(params);
+
+            PriceCreateParams priceParams = PriceCreateParams.builder()
+                    .setProduct(product.getId())
+                    .setUnitAmount(priceInCents)
+                    .setCurrency(currency)
+                    .build();
+
+            Price price = Price.create(priceParams);
+            Map<String, Object> updatedParams = new HashMap<>();
+            updatedParams.put("default_price", price.getId());
+            product.update(updatedParams);
+
+        } catch (StripeException e) {
+            e.printStackTrace();
+        }
+    }
 }
