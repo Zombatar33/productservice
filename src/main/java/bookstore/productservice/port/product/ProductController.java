@@ -2,13 +2,13 @@ package bookstore.productservice.port.product;
 
 import bookstore.productservice.core.domain.model.Product;
 import bookstore.productservice.core.domain.service.implementation.ProductService;
-import bookstore.productservice.port.product.dto.SearchRequest;
 import bookstore.productservice.port.product.exception.EmptySearchResultException;
 import bookstore.productservice.port.product.exception.NoProductsException;
 import bookstore.productservice.port.product.exception.ProductAlreadyExistsException;
 import bookstore.productservice.port.product.exception.ProductNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -81,7 +81,7 @@ public class ProductController {
         return productService.searchProduct(query);
     }
 
-    /*
+
     @RabbitListener(queues =  "#{queue.name}", concurrency = "5")
     public CustomReply checkStock(CustomMessage msg) {
         UUID id = msg.getProductId();
@@ -97,7 +97,5 @@ public class ProductController {
                 .inStock(quantity < product.getStock())
                 .build();
     }
-
-     */
 
 }
