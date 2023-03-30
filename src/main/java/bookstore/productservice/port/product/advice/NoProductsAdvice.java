@@ -13,7 +13,7 @@ public class NoProductsAdvice {
 
     @ResponseBody
     @ExceptionHandler(value = NoProductsException.class)
-    @ResponseStatus(HttpStatus.OK) // makes more sense than 404, because the request still came through
+    @ResponseStatus(HttpStatus.OK)
     String productNotFoundHandler(NoProductsException exception){
         return exception.getMessage();
     }
