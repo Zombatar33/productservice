@@ -24,9 +24,9 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: db
-      PGDATA: /data/postgres/products
+      PGDATA: /data/postgres2/products
     volumes:
-      - ./data:/data/postgres/products
+      - ./data:/data/postgres2/products
     ports:
       - 5432:5432
     restart: always
@@ -72,9 +72,9 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: db
-      PGDATA: /data/postgres/carts
+      PGDATA: /data/postgres2/carts
     volumes:
-      - ./data:/data/postgres/carts
+      - ./data:/data/postgres2/carts
     ports:
       - 5455:5432
     restart: always
@@ -108,9 +108,9 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: db
-      PGDATA: /data/postgres/users
+      PGDATA: /data/postgres2/users
     volumes:
-      - ./data:/data/postgres/users
+      - ./data:/data/postgres2/users
     ports:
       - 5433:5432
     restart: always

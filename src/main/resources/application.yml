@@ -8,7 +8,7 @@ spring:
     host: rabbitmq
     port: 5672
     username: guest
-    password: gust
+    password: guest
 
 # Hibernate ddl auto (create, create-drop, validate, update)
 jpa:
@@ -26,6 +26,3 @@ jwt:
 
 stripe:
   apiKey: sk_test_51MbtJZIvfdD8kiJGKVuHMzelyWEKF9HykXY5kTjZLMUyRUNjYIJSm2v5laa8kWYptzMKlde2HJEDjqGzLVt4knRq00cSwbylEL
-
-server:
-  port: 8081
