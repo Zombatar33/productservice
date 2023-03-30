@@ -1,25 +1,21 @@
 package bookstore.productservice;
 
-import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
-
-import java.util.*;
-
-import bookstore.productservice.core.domain.service.implementation.ProductService;
-import jakarta.validation.ConstraintViolationException;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
-
 import bookstore.productservice.core.domain.model.Product;
+import bookstore.productservice.core.domain.service.implementation.ProductService;
 import bookstore.productservice.core.domain.service.interfaces.IProductRepository;
 import bookstore.productservice.port.product.exception.EmptySearchResultException;
 import bookstore.productservice.port.product.exception.ProductAlreadyExistsException;
 import bookstore.productservice.port.product.exception.ProductNotFoundException;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.*;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ProductServiceTests {
