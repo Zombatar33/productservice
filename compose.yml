@@ -24,9 +24,9 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: db
-      PGDATA: /data/postgres
+      PGDATA: /data/postgres/products
     volumes:
-      - ./data:/data/postgres
+      - ./data:/data/postgres/products
     ports:
       - 5432:5432
     restart: always
@@ -72,9 +72,9 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: db
-      PGDATA: /data/postgres
+      PGDATA: /data/postgres/carts
     volumes:
-      - ./data:/data/postgres
+      - ./data:/data/postgres/carts
     ports:
       - 5455:5432
     restart: always
@@ -108,9 +108,9 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: db
-      PGDATA: /data/postgres
+      PGDATA: /data/postgres/users
     volumes:
-      - ./data:/data/postgres
+      - ./data:/data/postgres/users
     ports:
       - 5433:5432
     restart: always
@@ -119,3 +119,11 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
+  payment_service:
+    container_name: payment_service
+    build:
+      context: /Users/younes/Desktop/payment-service
+      dockerfile: /Users/younes/Desktop/payment-service/src/main/resources/Dockerfile
+    ports:
+      - "28083:8080"
